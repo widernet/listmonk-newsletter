@@ -285,7 +285,7 @@ def create_campaign(title: str, body: str) -> int:
         "name": title,
         "subject": title,
         # TODO list reference should be dynamic
-        "lists": [1],
+        "lists": [37],
         "content_type": "html",
         "body": body,
         "send_at": send_at,
@@ -411,7 +411,7 @@ def generate_campaign():
         log.info("first run, including recent entries", count=min(5, len(feed.entries)))
 
         new_entries = (
-            feed.entries[-5:]
+            feed.entries[:1]
             | fp.lmap(add_image_link)
         )
     else:
@@ -438,7 +438,7 @@ def generate_campaign():
         readwise_articles,
     )
 
-    subject_line = LISTMONK_TITLE
+    subject_line = new_entries[0].get("title", LISTMONK_TITLE)
 
     if LISTMONK_GEMINI_SUBJECT:
         entries_for_subject = [
