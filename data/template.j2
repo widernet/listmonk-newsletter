@@ -4,11 +4,14 @@
   {% if entry.image %}
     <img src="{{ entry.image }}">
   {% endif %}
-  {{ entry.content[0].value | safe }}
+  {{ entry.content[0].value | upscale_images | safe }}
+  <p>&nbsp;</p>
   <p><a href="{{ entry.link }}">Read on the blog &raquo;</a></p>
 {% endfor %}
 
 {% if recent_entries %}
+  <p>&nbsp;</p>
+  <hr>
   <h3>Other articles you might like:</h3>
   <ul>
     {% for entry in recent_entries %}

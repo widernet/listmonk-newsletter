@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import re
+
 import backoff
 import click
 import css_inline
@@ -351,6 +353,15 @@ def start_campaign(campaign_id: int) -> bool:
     return response.status_code == 200
 
 
+def upscale_images(html: str) -> str:
+    """Strip WordPress thumbnail size suffix from img src URLs."""
+    return re.sub(
+        r'(<img[^>]+src="[^"]+)-\d+x\d+(\.\w+)',
+        r'\1\2',
+        html,
+    )
+
+
 def render_email_content(
     new_entries: list[feedparser.FeedParserDict],
     github_summary: str | None,
@@ -361,6 +372,7 @@ def render_email_content(
         loader=jinja2.FileSystemLoader(searchpath=str(ROOT_DIRECTORY)),
         autoescape=jinja2.select_autoescape(["html", "xml"]),
     )
+    env.filters["upscale_images"] = upscale_images
 
     template = env.get_template(
         str(CONTENT_TEMPLATE_FILE.relative_to(ROOT_DIRECTORY))
