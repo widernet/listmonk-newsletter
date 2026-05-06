@@ -13,13 +13,13 @@ export LISTMONK_TEMPLATE=35
 export LISTMONK_TITLE="The Christian Connection Blog"
 
 # optional: when to send the campaign after it's been created
-export LISTMONK_SEND_AT="friday 8am"
+export LISTMONK_SEND_AT="friday 12pm"
 
 # list of emails to send test campaigns to
 export LISTMONK_TEST_EMAILS="simon@fingermouse.net"
 
 # cron-style schedule for when to generate the newsletter
-export SCHEDULE="0 6 * * 1"
+export SCHEDULE="0 8 * * 5" # Every Friday at 8am
 
 # optional: readwise reader integration
 # get your token from https://readwise.io/access_token
