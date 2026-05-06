@@ -355,18 +355,21 @@ def render_email_content(
     new_entries: list[feedparser.FeedParserDict],
     github_summary: str | None,
     readwise_articles: list[ReadwiseArticle],
+    recent_entries: list[feedparser.FeedParserDict] | None = None,
 ) -> str:
-    # Create a Jinja2 environment and load the template file
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(searchpath=str(ROOT_DIRECTORY)),
         autoescape=jinja2.select_autoescape(["html", "xml"]),
     )
 
-    template = env.get_template(str(CONTENT_TEMPLATE_FILE.relative_to(ROOT_DIRECTORY)))
+    template = env.get_template(
+        str(CONTENT_TEMPLATE_FILE.relative_to(ROOT_DIRECTORY))
+    )
     rendered_content = template.render(
         entries=new_entries,
         github_summary=github_summary,
         readwise_articles=readwise_articles,
+        recent_entries=recent_entries or [],
     )
 
     inliner = css_inline.CSSInliner(keep_style_tags=True)
@@ -432,14 +435,14 @@ def generate_campaign():
 
     log.info("new entries found", count=len(new_entries))
 
+    new_entry_links = {str(e.link) for e in new_entries}
+    recent_entries = [
+        e for e in feed.entries
+        if str(e.link) not in new_entry_links
+    ][:5]
+
     github_summary_html, github_checkpoint = build_github_summary_html()
     readwise_articles, readwise_checkpoint = build_readwise_articles()
-
-    content = render_email_content(
-        new_entries,
-        github_summary_html,
-        readwise_articles,
-    )
 
     subject_line = new_entries[0].get("title", LISTMONK_TITLE)
 
@@ -459,7 +462,12 @@ def generate_campaign():
             github_summary_html,
         )
 
-    content = render_email_content(new_entries, github_summary_html, readwise_articles)
+    content = render_email_content(
+        new_entries,
+        github_summary_html,
+        readwise_articles,
+        recent_entries,
+    )
     campaign_id = create_campaign(subject_line, content)
 
     send_successful = start_campaign(campaign_id)
