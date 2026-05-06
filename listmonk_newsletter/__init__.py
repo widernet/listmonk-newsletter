@@ -387,7 +387,8 @@ def generate_campaign():
         return
 
     # Sort feed entries chronologically
-    feed.entries.reverse()
+    # ----- NO! Adding this actually does the opposite of that
+    # feed.entries.reverse()
 
     # On first run (feed_entry_links.txt does not exist)
     entry_links = [str(entry.link) for entry in feed.entries]
