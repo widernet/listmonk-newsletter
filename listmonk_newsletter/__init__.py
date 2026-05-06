@@ -47,6 +47,10 @@ LISTMONK_TEMPLATE = config("LISTMONK_TEMPLATE", cast=int, default=None)
 LISTMONK_SEND_AT = config("LISTMONK_SEND_AT", cast=str, default=None)
 LISTMONK_TEST_EMAILS = config("LISTMONK_TEST_EMAILS", cast=Csv(), default=None)
 LISTMONK_GEMINI_SUBJECT = config("LISTMONK_GEMINI_SUBJECT", cast=bool, default=False)
+LISTMONK_LIST_IDS = config("LISTMONK_LIST_IDS", cast=Csv(int))
+
+FEED_ENTRY_ORDER = config("FEED_ENTRY_ORDER", default="newest")
+FEED_ENTRY_LIMIT = config("FEED_ENTRY_LIMIT", cast=int, default=1)
 
 BACKOFF_LIMIT = 8
 
@@ -284,8 +288,7 @@ def create_campaign(title: str, body: str) -> int:
     json_data = {
         "name": title,
         "subject": title,
-        # TODO list reference should be dynamic
-        "lists": [37],
+        "lists": LISTMONK_LIST_IDS,
         "content_type": "html",
         "body": body,
         "send_at": send_at,
@@ -386,9 +389,8 @@ def generate_campaign():
         log.error("feed is empty")
         return
 
-    # Sort feed entries chronologically
-    # ----- NO! Adding this actually does the opposite of that
-    # feed.entries.reverse()
+    if FEED_ENTRY_ORDER == "oldest":
+        feed.entries.reverse()
 
     # On first run (feed_entry_links.txt does not exist)
     entry_links = [str(entry.link) for entry in feed.entries]
@@ -409,10 +411,10 @@ def generate_campaign():
         return entry
 
     if first_run:
-        log.info("first run, including recent entries", count=min(5, len(feed.entries)))
+        log.info("first run, including recent entries", count=FEED_ENTRY_LIMIT)
 
         new_entries = (
-            feed.entries[:1]
+            feed.entries[:FEED_ENTRY_LIMIT]
             | fp.lmap(add_image_link)
         )
     else:

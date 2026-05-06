@@ -5,4 +5,5 @@
     <img src="{{ entry.image }}">
   {% endif %}
   {{ entry.content[0].value | safe }}
+  <p><a href="{{ entry.link }}">Read on the blog &raquo;</a></p>
 {% endfor %}

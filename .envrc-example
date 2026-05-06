@@ -6,11 +6,20 @@ export LISTMONK_API_TOKEN=""
 
 export RSS_URL="https://www.christianconnection.com/dating-advice/feed"
 
-# which listmonk template to use, should be an empty template
+# which listmonk template to use
 export LISTMONK_TEMPLATE=35
+
+# comma-separated list IDs to send the campaign to
+export LISTMONK_LIST_IDS="37"
 
 # title to use for the campaign
 export LISTMONK_TITLE="The Christian Connection Blog"
+
+# feed entry order: "newest" (default) or "oldest" first
+export FEED_ENTRY_ORDER="newest"
+
+# number of feed entries to include per run (default: 1)
+export FEED_ENTRY_LIMIT=1
 
 # optional: when to send the campaign after it's been created
 export LISTMONK_SEND_AT="friday 12pm"
