@@ -367,12 +367,10 @@ def extract_body_content(html: str) -> str:
 
 
 def upscale_images(html: str) -> str:
-    """Strip WordPress thumbnail size suffix from img src URLs."""
-    return re.sub(
-        r'(<img[^>]+src="[^"]+)-\d+x\d+(\.\w+)',
-        r'\1\2',
-        html,
-    )
+    """Strip WordPress thumbnail size suffix and inline dimensions from imgs."""
+    html = re.sub(r'(<img[^>]+src="[^"]+)-\d+x\d+(\.\w+)', r'\1\2', html)
+    html = re.sub(r'\s(?:width|height)="[^"]*"', '', html)
+    return html
 
 
 def render_email_content(
