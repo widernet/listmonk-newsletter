@@ -4,7 +4,7 @@
   {% if entry.image %}
     <img src="{{ entry.image }}">
   {% endif %}
-  {{ entry.content[0].value | upscale_images | safe }}
+  {{ entry.content[0].value | extract_body_content | upscale_images | safe }}
   <p>&nbsp;</p>
   <p><a href="{{ entry.link }}">Read on the blog &raquo;</a></p>
 {% endfor %}

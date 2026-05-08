@@ -353,6 +353,19 @@ def start_campaign(campaign_id: int) -> bool:
     return response.status_code == 200
 
 
+def extract_body_content(html: str) -> str:
+    tree = etree.fromstring(html, etree.HTMLParser())
+    body = tree.find(".//body")
+    if body is None:
+        return html
+    parts = []
+    if body.text:
+        parts.append(body.text)
+    for child in body:
+        parts.append(etree.tostring(child, encoding="unicode"))
+    return "".join(parts)
+
+
 def upscale_images(html: str) -> str:
     """Strip WordPress thumbnail size suffix from img src URLs."""
     return re.sub(
@@ -373,6 +386,7 @@ def render_email_content(
         autoescape=jinja2.select_autoescape(["html", "xml"]),
     )
     env.filters["upscale_images"] = upscale_images
+    env.filters["extract_body_content"] = extract_body_content
 
     template = env.get_template(
         str(CONTENT_TEMPLATE_FILE.relative_to(ROOT_DIRECTORY))
