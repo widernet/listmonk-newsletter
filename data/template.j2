@@ -1,6 +1,6 @@
 {% for entry in entries %}
   <h2>{{ entry.title }}</h2>
-  <em>Written by {{ entry.author }}</em>
+  <em class="author">Written by {{ entry.author }}</em>
   {% if entry.image %}
     <img src="{{ entry.image }}">
   {% endif %}
